@@ -76,8 +76,20 @@ class SellerProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        $user = request()->user();
+        $product = Product::where([
+            ['id', "=", $id],
+            ['seller_id', "=", $user->id]
+        ])->first();
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Not Found!'
+            ], 404);
+        }
+
+        $product->delete();
     }
 }
