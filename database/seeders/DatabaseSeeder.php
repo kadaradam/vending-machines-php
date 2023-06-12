@@ -13,7 +13,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        User::factory()
+            ->count(3)
+            ->hasProducts(0)
+            ->create([
+                'role' => 'buyer',
+            ]);
+
+        User::factory()
+            ->count(2)
+            ->hasProducts(4)
+            ->create([
+                'role' => 'seller',
+            ]);
+
+       /*  $this->call([
+            UserSeeder::class
+        ]); */
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
