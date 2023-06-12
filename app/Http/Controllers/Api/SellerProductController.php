@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use App\Http\Resources\SellerProductResource;
+use App\Http\Resources\SellerProductCollection;
 
 class SellerProductController extends Controller
 {
@@ -16,7 +18,7 @@ class SellerProductController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        return Product::where('seller_id', "=", $user->id)->paginate();
+        return new SellerProductCollection(Product::where('seller_id', "=", $user->id)->paginate());
     }
 
     /**
@@ -38,9 +40,21 @@ class SellerProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        //
+        $user = request()->user();
+        $product = Product::where([
+            ['id', "=", $id],
+            ['seller_id', "=", $user->id]
+        ])->first();
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Not Found!'
+            ], 404);
+        }
+
+        return new SellerProductResource($product);
     }
 
     /**

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use App\Http\Resources\BuyerProductResource;
+use App\Http\Resources\BuyerProductCollection;
 
 class BuyerProductController extends Controller
 {
@@ -14,7 +16,7 @@ class BuyerProductController extends Controller
      */
     public function index()
     {
-        return Product::paginate();
+        return  new BuyerProductCollection(Product::paginate());
     }
 
     /**
@@ -36,9 +38,9 @@ class BuyerProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        //
+        return new BuyerProductResource(Product::find($id));
     }
 
     /**
