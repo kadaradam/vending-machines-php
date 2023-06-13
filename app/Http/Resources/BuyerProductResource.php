@@ -17,7 +17,8 @@ class BuyerProductResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'cost'=> $this->cost,
+            'cost' => $this->cost,
+            'sellerId' => $this->seller_id,
         ];
     }
 }
