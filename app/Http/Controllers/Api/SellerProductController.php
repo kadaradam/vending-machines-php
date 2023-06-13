@@ -39,7 +39,7 @@ class SellerProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(string $id)
     {
         $user = request()->user();
         $product = Product::where([
@@ -59,7 +59,7 @@ class SellerProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSellerProductRequest $request, $id)
+    public function update(UpdateSellerProductRequest $request, string $id)
     {
         $user = request()->user();
 
@@ -72,7 +72,7 @@ class SellerProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $user = request()->user();
         $product = Product::where([
