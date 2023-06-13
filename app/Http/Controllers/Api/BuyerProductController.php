@@ -18,16 +18,17 @@ class BuyerProductController extends Controller
     {
         $filter = new ProductFilter();
         $queryItems = $filter->transform($request);
+        $populateSeller = $request->query('populateSeller');
 
-        if (count($queryItems) > 0) {
-            $products = Product::where($queryItems)->paginate();
+        $products = Product::where($queryItems);
 
-            return new BuyerProductCollection(
-                $products->appends($request->query())
-            );
+        if ($populateSeller) {
+            $products = $products->with('seller');
         }
 
-        return new BuyerProductCollection(Product::paginate());
+        return new BuyerProductCollection(
+            $products->paginate()->appends($request->query())
+        );
     }
 
     /**
