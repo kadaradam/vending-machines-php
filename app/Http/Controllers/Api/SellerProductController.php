@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\StoreSellerProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Http\Resources\SellerProductResource;
@@ -32,9 +32,17 @@ class SellerProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreSellerProductRequest $request)
     {
-        //
+        $user = $request->user();
+        $name = $request->name;
+        $cost = $request->cost;
+
+        return new SellerProductResource(Product::create([
+            'seller_id' => 7,
+            'name' => $name,
+            'cost' => $cost,
+        ]));
     }
 
     /**

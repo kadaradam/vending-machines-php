@@ -19,6 +19,7 @@ class Product extends Model
         'name',
         'cost',
         'wallet',
+        'seller_id'
     ];
 
     /**
