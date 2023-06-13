@@ -19,10 +19,7 @@ Route::post('register/buyer', 'App\\Http\\Controllers\\Api\\AuthController@regis
 Route::post('login', 'App\\Http\\Controllers\\Api\\AuthController@login');
 
 Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => 'auth:sanctum'], function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
+    Route::apiResource('user', UserController::class);
     Route::apiResource('products/seller', SellerProductController::class)->middleware('role:seller');
     Route::apiResource('products/buyer', BuyerProductController::class)->middleware('role:buyer');
 });
