@@ -22,19 +22,10 @@ class SellerProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreSellerProductRequest $request)
     {
-        $user = $request->user();
         $name = $request->name;
         $cost = $request->cost;
 
@@ -63,14 +54,6 @@ class SellerProductController extends Controller
         }
 
         return new SellerProductResource($product);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
     }
 
     /**
