@@ -20,7 +20,11 @@ class BuyerProductController extends Controller
         $queryItems = $filter->transform($request);
 
         if (count($queryItems) > 0) {
-            return new BuyerProductCollection(Product::where($queryItems)->paginate());
+            $products = Product::where($queryItems)->paginate();
+
+            return new BuyerProductCollection(
+                $products->appends($request->query())
+            );
         }
 
         return new BuyerProductCollection(Product::paginate());

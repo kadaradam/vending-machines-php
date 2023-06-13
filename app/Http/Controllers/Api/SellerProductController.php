@@ -23,13 +23,19 @@ class SellerProductController extends Controller
         $queryItems = $filter->transform($request);
 
         if (count($queryItems) > 0) {
-            return new SellerProductCollection(Product::where([
+            $products = Product::where([
                 ...$queryItems,
                 ['seller_id', "=", $user->id]
-            ])->paginate());
+            ])->paginate();
+
+            return new SellerProductCollection(
+                $products->appends($request->query())
+            );
         }
 
-        return new SellerProductCollection(Product::where('seller_id', "=", $user->id)->paginate());
+        return new SellerProductCollection(
+            Product::where('seller_id', "=", $user->id)->paginate()
+        );
     }
 
     /**
