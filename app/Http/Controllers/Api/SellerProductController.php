@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSellerProductRequest;
-use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\UpdateSellerProductRequest;
 use App\Models\Product;
 use App\Http\Resources\SellerProductResource;
 use App\Http\Resources\SellerProductCollection;
@@ -76,9 +76,14 @@ class SellerProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateSellerProductRequest $request, $id)
     {
-        //
+        $user = request()->user();
+
+        Product::where([
+            ['id', "=", $id],
+            ['seller_id', "=", $user->id]
+        ])->update($request->validated());
     }
 
     /**

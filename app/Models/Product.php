@@ -31,7 +31,8 @@ class Product extends Model
         'wallet' => 'json'
     ];
 
-    public function seller() {
+    public function seller()
+    {
         return $this->belongsTo(User::class);
     }
 }
