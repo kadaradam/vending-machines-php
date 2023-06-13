@@ -17,17 +17,17 @@ class DatabaseSeeder extends Seeder
             ->count(3)
             ->hasProducts(0)
             ->create([
-                'role' => 'buyer',
+                'role' => User::ROLES['BUYER'],
             ]);
 
         User::factory()
             ->count(2)
             ->hasProducts(4)
             ->create([
-                'role' => 'seller',
+                'role' => User::ROLES['SELLER'],
             ]);
 
-       /*  $this->call([
+        /*  $this->call([
             UserSeeder::class
         ]); */
 

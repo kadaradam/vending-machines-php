@@ -14,6 +14,12 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+
+    public const ROLES = [
+        'SELLER' => 'seller',
+        'BUYER' => 'buyer'
+    ];
+
     public function hasRole(string $role)
     {
         return $this->role === $role;
@@ -50,7 +56,8 @@ class User extends Authenticatable
         'wallet' => 'json'
     ];
 
-    public function products(): HasMany {
+    public function products(): HasMany
+    {
         return $this->hasMany(Product::class, 'seller_id');
     }
 }

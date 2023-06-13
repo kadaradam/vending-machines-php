@@ -8,21 +8,14 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function registerSeller(Request $request)
     {
-        $request->validate([
-            'username' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:6'
-        ]);
+        return $this->handleUserRegister($request, User::ROLES['SELLER']);
+    }
 
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-
-        return response()->json($user);
+    public function registerBuyer(Request $request)
+    {
+        return $this->handleUserRegister($request, User::ROLES['BUYER']);
     }
 
     public function login(Request $request)
@@ -44,12 +37,30 @@ class AuthController extends Controller
                 ]
             ], 422);
         }
-    
+
         $user = User::where('email', $request->email)->first();
         $authToken = $user->createToken('auth-token')->plainTextToken;
-    
+
         return response()->json([
             'access_token' => $authToken,
         ]);
+    }
+
+    protected function handleUserRegister(Request $request, string $role)
+    {
+        $request->validate([
+            'username' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:6'
+        ]);
+
+        $user = User::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role' => $role
+        ]);
+
+        return response()->json($user);
     }
 }
