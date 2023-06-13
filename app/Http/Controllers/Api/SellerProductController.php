@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Filters\ProductFilter;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSellerProductRequest;
@@ -18,6 +19,16 @@ class SellerProductController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $filter = new ProductFilter();
+        $queryItems = $filter->transform($request);
+
+        if (count($queryItems) > 0) {
+            return new SellerProductCollection(Product::where([
+                ...$queryItems,
+                ['seller_id', "=", $user->id]
+            ])->paginate());
+        }
+
         return new SellerProductCollection(Product::where('seller_id', "=", $user->id)->paginate());
     }
 
