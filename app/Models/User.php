@@ -34,7 +34,8 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'wallet'
+        'wallet',
+        'role'
     ];
 
     /**

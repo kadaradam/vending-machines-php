@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\Response;
 
 class AuthController extends Controller
 {
@@ -61,6 +64,9 @@ class AuthController extends Controller
             'role' => $role
         ]);
 
-        return response()->json($user);
+        return Response::json(
+            new UserResource($user),
+            HttpResponse::HTTP_CREATED
+        );
     }
 }
