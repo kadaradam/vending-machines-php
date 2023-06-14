@@ -7,21 +7,22 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 
 class AuthController extends Controller
 {
-    public function registerSeller(Request $request)
+    public function registerSeller(Request $request): JsonResponse
     {
         return $this->handleUserRegister($request, User::ROLES['SELLER']);
     }
 
-    public function registerBuyer(Request $request)
+    public function registerBuyer(Request $request): JsonResponse
     {
         return $this->handleUserRegister($request, User::ROLES['BUYER']);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $request->validate([
             'email' => 'required|email',
@@ -44,12 +45,12 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
         $authToken = $user->createToken('auth-token')->plainTextToken;
 
-        return response()->json([
+        return Response::json([
             'access_token' => $authToken,
         ]);
     }
 
-    protected function handleUserRegister(Request $request, string $role)
+    protected function handleUserRegister(Request $request, string $role): JsonResponse
     {
         $request->validate([
             'username' => 'required',

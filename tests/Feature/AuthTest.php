@@ -147,4 +147,26 @@ class AuthTest extends TestCase
         ],
       ]);
   }
+
+  /**
+   * A user can login successfully.
+   *
+   * @return void
+   */
+  public function testAUserCanLoginSuccessfully()
+  {
+    $user = User::factory(['password' => Hash::make('123456')])->create();
+
+    $request = [
+      'email' => $user->email,
+      'password' => '123456',
+    ];
+
+    $this
+      ->json('POST', $this->routes['login'], $request)
+      ->assertStatus(Response::HTTP_OK)
+      ->assertJsonStructure([
+        'access_token'
+      ]);
+  }
 }
