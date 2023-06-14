@@ -156,6 +156,53 @@ class SellerProductTest extends TestCase
             ->assertJsonCount(0, 'data');
     }
 
+    public function testASellerCanViewAProduct(): void
+    {
+        $product = Product::factory([
+            'seller_id' => $this->user->id,
+            'name' => 'Cola',
+            'cost' => 2
+        ])->create();
+
+        $productId = $product->id;
+        $route = "{$this->routes['show']}/{$productId}";
+
+        $this
+            ->json('GET', $route)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'name',
+                    'cost',
+                    'wallet',
+                    'sellerId'
+                ]
+            ])
+            ->assertJson(
+                SellerProductResource::make($product)->response()->getData(true)
+            );
+    }
+
+    public function testASellerCantViewOthersProduct(): void
+    {
+        $product = Product::factory([
+            'seller_id' => 999,
+            'name' => 'Cola',
+            'cost' => 2
+        ])->create();
+
+        $productId = $product->id;
+        $route = "{$this->routes['show']}/{$productId}";
+
+        $this
+            ->json('GET', $route)
+            ->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertJson([
+                'message' => 'Not Found!'
+            ]);
+    }
+
     public function testASellerCanCreateProduct(): void
     {
         $request = [
