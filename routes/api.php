@@ -18,7 +18,10 @@ Route::post('register/buyer', 'App\\Http\\Controllers\\Api\\AuthController@regis
 Route::post('login', 'App\\Http\\Controllers\\Api\\AuthController@login');
 
 Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => 'auth:sanctum'], function () {
-    Route::apiResource('user', UserController::class);
+    Route::apiResource('user', UserController::class)->except(['index', 'create', 'store', 'show', 'edit']);
+    Route::get('user/me', 'App\\Http\\Controllers\\Api\\UserController@me');
     Route::apiResource('products/seller', SellerProductController::class)->middleware('role:seller');
-    Route::apiResource('products/buyer', BuyerProductController::class)->middleware('role:buyer');
+    Route::apiResource("products/buyer", BuyerProductController::class)
+        ->except(["create", "store", "edit", "update", "destroy"])
+        ->middleware("role:buyer");
 });

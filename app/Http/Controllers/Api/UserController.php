@@ -6,16 +6,18 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DestroyUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Support\Facades\Response;
 
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display the actual logged in user.
      */
-    public function index(Request $request)
+    public function me(Request $request)
     {
-        return $request->user();
+        return Response::json(new UserResource($request->user()));
     }
 
     /**
