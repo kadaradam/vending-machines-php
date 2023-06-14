@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 class SellerProductTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
 
     /**
      * @var array
@@ -41,9 +42,9 @@ class SellerProductTest extends TestCase
             'index-filter-by-cost' => '/api/products/seller?cost[gt]=3',
             'index-filter-by-seller' => '/api/products/seller?sellerId[eq]=-1',
             'store' => '/api/products/seller',
-            'show' => '/api/products/seller/1',
-            'update' => '/api/products/seller/1',
-            'destroy' => '/api/products/seller/1',
+            'show' => '/api/products/seller',
+            'update' => '/api/products/seller',
+            'destroy' => '/api/products/seller',
         ];
 
         $this->user = User::factory(['role' => User::ROLES['SELLER']])->create();
@@ -180,5 +181,53 @@ class SellerProductTest extends TestCase
             ->json('GET', $this->routes['index-filter-by-seller'])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(0, 'data');
+    }
+
+    public function testASellerCanPatchProduct(): void
+    {
+        $product = Product::factory([
+            'seller_id' => $this->user->id,
+            'name' => 'Cola',
+            'cost' => 2
+        ])->create();
+        $id = $product->id;
+
+        $request = [
+            'name' => $this->faker->jobTitle(),
+        ];
+
+        $this
+            ->json('PATCH', "{$this->routes['update']}/{$id}", $request)
+            ->assertStatus(Response::HTTP_OK);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $id,
+            'name' => $request['name']
+        ]);
+    }
+
+    public function testASellerCanPutProduct(): void
+    {
+        $product = Product::factory([
+            'seller_id' => $this->user->id,
+            'name' => 'Cola',
+            'cost' => 2
+        ])->create();
+        $id = $product->id;
+
+        $request = [
+            'name' => $this->faker->jobTitle(),
+            'cost' => 100
+        ];
+
+        $this
+            ->json('PUT', "{$this->routes['update']}/{$id}", $request)
+            ->assertStatus(Response::HTTP_OK);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $id,
+            'name' => $request['name'],
+            'cost' => $request['cost']
+        ]);
     }
 }
