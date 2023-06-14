@@ -10,6 +10,8 @@ use App\Http\Requests\UpdateSellerProductRequest;
 use App\Models\Product;
 use App\Http\Resources\SellerProductResource;
 use App\Http\Resources\SellerProductCollection;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Response as HttpResponse;
 
 class SellerProductController extends Controller
 {
@@ -43,14 +45,18 @@ class SellerProductController extends Controller
      */
     public function store(StoreSellerProductRequest $request)
     {
+        $user = request()->user();
         $name = $request->name;
         $cost = $request->cost;
 
-        return new SellerProductResource(Product::create([
-            'seller_id' => 7,
-            'name' => $name,
-            'cost' => $cost,
-        ]));
+        return Response::json(
+            new SellerProductResource(Product::create([
+                'seller_id' => $user->id,
+                'name' => $name,
+                'cost' => $cost,
+            ])),
+            HttpResponse::HTTP_CREATED
+        );
     }
 
     /**
