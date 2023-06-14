@@ -73,7 +73,7 @@ class SellerProductController extends Controller
         if (!$product) {
             return response()->json([
                 'message' => 'Not Found!'
-            ], 404);
+            ], HttpResponse::HTTP_NOT_FOUND);
         }
 
         return new SellerProductResource($product);
@@ -106,7 +106,7 @@ class SellerProductController extends Controller
         if (!$product) {
             return response()->json([
                 'message' => 'Not Found!'
-            ], 404);
+            ], HttpResponse::HTTP_NOT_FOUND);
         }
 
         $product->delete();

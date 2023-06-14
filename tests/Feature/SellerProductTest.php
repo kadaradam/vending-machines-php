@@ -240,18 +240,41 @@ class SellerProductTest extends TestCase
             'cost' => 2
         ])->create();
         $id = $product->id;
+        $route = "{$this->routes['update']}/{$id}";
 
         $request = [
             'sellerId' => 999,
         ];
 
         $this
-            ->json('PATCH', "{$this->routes['update']}/{$id}", $request)
+            ->json('PATCH', $route, $request)
             ->assertStatus(Response::HTTP_OK);
 
         $this->assertDatabaseHas('products', [
             'id' => $id,
             'seller_id' => $userId,
+        ]);
+    }
+
+    public function testASellerCantDeleteOthersProduct(): void
+    {
+        $product = Product::factory([
+            'seller_id' => 999,
+            'name' => 'Cola',
+            'cost' => 2
+        ])->create();
+        $id = $product->id;
+        $route = "{$this->routes['destroy']}/{$id}";
+
+        $this
+            ->json('DELETE', $route)
+            ->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertJson([
+                'message' => 'Not Found!'
+            ]);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $id,
         ]);
     }
 }
