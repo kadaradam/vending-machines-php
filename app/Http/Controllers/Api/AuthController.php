@@ -39,7 +39,7 @@ class AuthController extends Controller
                         'Invalid credentials'
                     ],
                 ]
-            ], HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
+            ], HttpResponse::HTTP_UNAUTHORIZED);
         }
 
         $user = User::where('email', $request->email)->first();

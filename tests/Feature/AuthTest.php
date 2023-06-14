@@ -169,4 +169,45 @@ class AuthTest extends TestCase
         'access_token'
       ]);
   }
+
+  /**
+   * A user can not login without required input.
+   *
+   * @return void
+   */
+  public function testAUserCanNotLoginWithoutRequiredInput()
+  {
+    $this
+      ->json('POST', $this->routes['login'], [])
+      ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+      ->assertJsonValidationErrorFor('email')
+      ->assertJsonValidationErrorFor('password');
+  }
+
+  /**
+   * A user can not login with invalid credentials.
+   *
+   * @return void
+   */
+  public function testAUserCanNotLoginWithInvalidCredentials()
+  {
+    $user = User::factory(['password' => Hash::make('123456')])->create();
+
+    $request = [
+      'email' => $user->email,
+      'password' => $this->faker->password(),
+    ];
+
+    $this
+      ->json('POST', $this->routes['login'], $request)
+      ->assertStatus(Response::HTTP_UNAUTHORIZED)
+      ->assertJson([
+        "message" => "The given data was invalid.",
+        'errors' => [
+          'password' => [
+            'Invalid credentials',
+          ],
+        ],
+      ]);
+  }
 }
