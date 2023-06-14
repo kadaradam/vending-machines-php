@@ -104,4 +104,47 @@ class AuthTest extends TestCase
 
     $this->assertInstanceOf(UserResource::class, $response->getOriginalContent());
   }
+
+  /**
+   * A user can not signup without required input.
+   *
+   * @return void
+   */
+  public function testAUserCanNotSignupWithoutRequiredInput()
+  {
+    $this
+      ->json('POST', $this->routes['register/seller'], [])
+      ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+      ->assertJsonValidationErrorFor('username')
+      ->assertJsonValidationErrorFor('email')
+      ->assertJsonValidationErrorFor('password');
+  }
+
+  /**
+   * A user can not signup with conflicting email.
+   *
+   * @return void
+   */
+  public function testAUserCanNotSignupWithConflictingEmail()
+  {
+    $user = User::factory()->create();
+
+    $request = [
+      'email' => $user->email,
+      'username' => $user->username,
+      'password' => '123456',
+    ];
+
+    $this
+      ->json('POST', $this->routes['register/seller'], $request)
+      ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+      ->assertJsonValidationErrorFor('email')
+      ->assertJson([
+        'errors' => [
+          'email' => [
+            'The email has already been taken.',
+          ],
+        ],
+      ]);
+  }
 }

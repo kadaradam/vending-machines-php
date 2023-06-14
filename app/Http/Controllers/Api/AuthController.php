@@ -38,7 +38,7 @@ class AuthController extends Controller
                         'Invalid credentials'
                     ],
                 ]
-            ], 422);
+            ], HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $user = User::where('email', $request->email)->first();
@@ -56,6 +56,18 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:6'
         ]);
+
+        $checkUser = User::where('email', $request->email)->first();
+
+        if ($checkUser) {
+            return response()->json([
+                'errors' => [
+                    'email' => [
+                        'The email has already been taken.'
+                    ],
+                ]
+            ], HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         $user = User::create([
             'username' => $request->username,
