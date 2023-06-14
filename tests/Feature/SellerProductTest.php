@@ -60,33 +60,6 @@ class SellerProductTest extends TestCase
         parent::tearDown();
     }
 
-    public function testASellerCanCreateProduct(): void
-    {
-        $request = [
-            'name' => 'Coca Cola',
-            'cost' => 2,
-        ];
-
-        $response = $this
-            ->json('POST', $this->routes['store'], $request)
-            ->assertStatus(Response::HTTP_CREATED)
-            ->assertJsonStructure([
-                'id',
-                'name',
-                'cost',
-                'wallet',
-                'sellerId'
-            ])
-            ->assertJson([
-                'name' => $request['name'],
-                'cost' => $request['cost'],
-                'wallet' => null,
-                'sellerId' => $this->user->id
-            ]);
-
-        $this->assertInstanceOf(SellerProductResource::class, $response->getOriginalContent());
-    }
-
     public function testASellerCanListItsProducts(): void
     {
         $products = Product::factory([
@@ -181,6 +154,33 @@ class SellerProductTest extends TestCase
             ->json('GET', $this->routes['index-filter-by-seller'])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(0, 'data');
+    }
+
+    public function testASellerCanCreateProduct(): void
+    {
+        $request = [
+            'name' => 'Coca Cola',
+            'cost' => 2,
+        ];
+
+        $response = $this
+            ->json('POST', $this->routes['store'], $request)
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'id',
+                'name',
+                'cost',
+                'wallet',
+                'sellerId'
+            ])
+            ->assertJson([
+                'name' => $request['name'],
+                'cost' => $request['cost'],
+                'wallet' => null,
+                'sellerId' => $this->user->id
+            ]);
+
+        $this->assertInstanceOf(SellerProductResource::class, $response->getOriginalContent());
     }
 
     public function testASellerCanPatchProduct(): void
