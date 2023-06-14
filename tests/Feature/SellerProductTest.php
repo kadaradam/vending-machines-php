@@ -230,4 +230,28 @@ class SellerProductTest extends TestCase
             'cost' => $request['cost']
         ]);
     }
+
+    public function testASellerCantPatchSellerId(): void
+    {
+        $userId = $this->user->id;
+        $product = Product::factory([
+            'seller_id' => $userId,
+            'name' => 'Cola',
+            'cost' => 2
+        ])->create();
+        $id = $product->id;
+
+        $request = [
+            'sellerId' => 999,
+        ];
+
+        $this
+            ->json('PATCH', "{$this->routes['update']}/{$id}", $request)
+            ->assertStatus(Response::HTTP_OK);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $id,
+            'seller_id' => $userId,
+        ]);
+    }
 }
