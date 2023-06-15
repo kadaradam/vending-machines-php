@@ -49,14 +49,15 @@ class SellerProductController extends Controller
         $name = $request->name;
         $cost = $request->cost;
 
-        return Response::json(
-            new SellerProductResource(Product::create([
+        return (new SellerProductResource(
+            Product::create([
                 'seller_id' => $user->id,
                 'name' => $name,
                 'cost' => $cost,
-            ])),
-            HttpResponse::HTTP_CREATED
-        );
+            ])
+        ))
+            ->response()
+            ->setStatusCode(HttpResponse::HTTP_CREATED);;
     }
 
     /**

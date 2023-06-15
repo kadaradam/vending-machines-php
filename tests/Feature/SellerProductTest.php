@@ -212,24 +212,29 @@ class SellerProductTest extends TestCase
             'cost' => 2,
         ];
 
-        $response = $this
+        $resourceData = (object) [
+            'id' => 1,
+            'name' => $request['name'],
+            'cost' => $request['cost'],
+            'wallet' => null,
+            'seller_id' => $this->user->id,
+        ];
+        $expectedResult = SellerProductResource::make($resourceData)->response()->getData(true);
+        unset($expectedResult['data']['id']);
+
+        $this
             ->json('POST', $this->routes['store'], $request)
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'cost',
-                'wallet',
-                'sellerId'
+                'data' => [
+                    'id',
+                    'name',
+                    'cost',
+                    'wallet',
+                    'sellerId'
+                ]
             ])
-            ->assertJson([
-                'name' => $request['name'],
-                'cost' => $request['cost'],
-                'wallet' => null,
-                'sellerId' => $this->user->id
-            ]);
-
-        $this->assertInstanceOf(SellerProductResource::class, $response->getOriginalContent());
+            ->assertJson($expectedResult);
     }
 
     public function testASellerCanPatchProduct(): void
