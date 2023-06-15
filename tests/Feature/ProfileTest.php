@@ -50,24 +50,21 @@ class ProfileTest extends TestCase
    */
   public function testAUserCanGetHisProfile()
   {
-    $response = $this
+    $this
       ->json('GET', $this->routes['me'])
       ->assertStatus(Response::HTTP_OK)
       ->assertJsonStructure([
-        'id',
-        'username',
-        'email',
-        'created_at',
-        'updated_at'
+        'data' => [
+          'id',
+          'username',
+          'email',
+          'role',
+          'createdAt',
+          'updatedAt'
+        ]
       ])
-      ->assertJson([
-        'id' => $this->user->id,
-        'username' => $this->user->username,
-        'email' => $this->user->email,
-        'created_at' => $this->user->created_at->toJSON(),
-        'updated_at' => $this->user->updated_at->toJSON(),
-      ]);
-
-    $this->assertInstanceOf(UserResource::class, $response->getOriginalContent());
+      ->assertJson(
+        UserResource::make($this->user)->response()->getData(true)
+      );
   }
 }
