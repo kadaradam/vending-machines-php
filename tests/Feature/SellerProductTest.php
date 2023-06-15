@@ -45,6 +45,8 @@ class SellerProductTest extends TestCase
             'show' => '/api/products/seller',
             'update' => '/api/products/seller',
             'destroy' => '/api/products/seller',
+            'buyer-show' => '/api/products/buyer',
+            'buyer-index' => '/api/products/buyer',
         ];
 
         $this->user = User::factory(['role' => User::ROLES['SELLER']])->create();
@@ -323,5 +325,34 @@ class SellerProductTest extends TestCase
         $this->assertDatabaseHas('products', [
             'id' => $id,
         ]);
+    }
+
+    public function testASellerCantListBuyerProducts(): void
+    {
+        $this
+            ->json('GET', $this->routes['buyer-index'])
+            ->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertJsonStructure([
+                'message',
+            ])
+            ->assertJson([
+                'message' => 'Unauthorized',
+            ]);
+    }
+
+    public function testASellerCantViewABuyerProduct(): void
+    {
+        $productId = 999;
+        $route = "{$this->routes['buyer-show']}/{$productId}";
+
+        $this
+            ->json('GET', $route)
+            ->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertJsonStructure([
+                'message',
+            ])
+            ->assertJson([
+                'message' => 'Unauthorized',
+            ]);
     }
 }
