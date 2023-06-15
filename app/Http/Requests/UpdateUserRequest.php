@@ -4,6 +4,47 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\RequestBody(
+ *      request="UpdateUserRequestPatch",
+ *      description="List of available properties to update",
+ *      required=true,
+ *      @OA\JsonContent(
+ *          @OA\Property(
+ *              property="username",
+ *              type="string",
+ *              description="The username of the user",
+ *              example="JohnSnow"
+ *          ),
+ *          @OA\Property(
+ *              property="email",
+ *              type="string",
+ *              description="The email of the user",
+ *              example="john@example.com"
+ *          )
+ *      )
+ * )
+ * * @OA\RequestBody(
+ *      request="UpdateUserRequestPut",
+ *      description="List of available properties to update",
+ *      required=true,
+ *      @OA\JsonContent(
+ *          required={"username", "email"},
+ *          @OA\Property(
+ *              property="username",
+ *              type="string",
+ *              description="The username of the user",
+ *              example="JohnSnow"
+ *          ),
+ *          @OA\Property(
+ *              property="email",
+ *              type="string",
+ *              description="The email of the user",
+ *              example="john@example.com"
+ *          )
+ *      )
+ * )
+ */
 class UpdateUserRequest extends FormRequest
 {
     /**

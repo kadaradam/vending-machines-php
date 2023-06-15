@@ -1,0 +1,247 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Vending Machines Api Documentation",
+        "description": "Vending Machines Api Documentation",
+        "contact": {
+            "name": "kadaradam",
+            "email": "contact@kadaradam.dev"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/user/me": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Display the actual logged in user.",
+                "operationId": "getUser",
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/UserResource"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/user/{userId}": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update your user profile property in storage.",
+                "operationId": "updateUserPut",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "The id of user to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/UpdateUserRequestPut"
+                },
+                "responses": {
+                    "403": {
+                        "description": "Action is unauthorized"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Remove your user from storage.",
+                "operationId": "deleteUser",
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update your whole user profile in storage.",
+                "description": "Update your whole user profile in storage.",
+                "operationId": "updateUserPatch",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "The id of user to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/UpdateUserRequestPatch"
+                },
+                "responses": {
+                    "403": {
+                        "description": "Action is unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "UserResource": {
+                "description": "All information about the user",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "data": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "The id of the user",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "username": {
+                                            "description": "The username of the user",
+                                            "type": "string",
+                                            "example": "JohnSnow"
+                                        },
+                                        "email": {
+                                            "description": "The email of the user",
+                                            "type": "string",
+                                            "example": "john@example.com"
+                                        },
+                                        "role": {
+                                            "description": "The role of the user",
+                                            "type": "string",
+                                            "enum": [
+                                                "seller",
+                                                "buyer"
+                                            ],
+                                            "example": "seller"
+                                        },
+                                        "createdAt": {
+                                            "description": "User created timestamp",
+                                            "type": "timestamp",
+                                            "example": "2014-01-01T23:28:56.782Z"
+                                        },
+                                        "updatedAt": {
+                                            "description": "User updated timestamp",
+                                            "type": "timestamp",
+                                            "example": "2014-01-01T23:28:56.782Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "requestBodies": {
+            "UpdateUserRequestPatch": {
+                "description": "List of available properties to update",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "username": {
+                                    "description": "The username of the user",
+                                    "type": "string",
+                                    "example": "JohnSnow"
+                                },
+                                "email": {
+                                    "description": "The email of the user",
+                                    "type": "string",
+                                    "example": "john@example.com"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "UpdateUserRequestPut": {
+                "description": "List of available properties to update",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "username",
+                                "email"
+                            ],
+                            "properties": {
+                                "username": {
+                                    "description": "The username of the user",
+                                    "type": "string",
+                                    "example": "JohnSnow"
+                                },
+                                "email": {
+                                    "description": "The email of the user",
+                                    "type": "string",
+                                    "example": "john@example.com"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "bearerAuth",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
