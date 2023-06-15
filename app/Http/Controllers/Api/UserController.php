@@ -98,7 +98,7 @@ class UserController extends Controller
      *     @OA\RequestBody(ref="#/components/requestBodies/UpdateUserRequestPut")
      * )
      */
-    public function update(UpdateUserRequest $request, string $id)
+    public function update(UpdateUserRequest $request)
     {
         $user = request()->user();
 
@@ -118,6 +118,10 @@ class UserController extends Controller
      *     @OA\Response(
      *          response=200,
      *          description="User deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Action is unauthorized"
      *     ),
      *     @OA\Response(
      *         response=404,

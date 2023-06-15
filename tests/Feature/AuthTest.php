@@ -171,7 +171,7 @@ class AuthTest extends TestCase
       ->json('POST', $this->routes['login'], $request)
       ->assertStatus(Response::HTTP_OK)
       ->assertJsonStructure([
-        'access_token'
+        'accessToken'
       ]);
   }
 

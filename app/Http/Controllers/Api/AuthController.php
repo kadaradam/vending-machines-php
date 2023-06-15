@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginUserRequest;
+use App\Http\Requests\RegisterUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,23 +14,86 @@ use Illuminate\Support\Facades\Response;
 
 class AuthController extends Controller
 {
-    public function registerSeller(Request $request): JsonResponse
+    /**
+     * Registers a seller user.
+     * 
+     * @OA\Post(
+     *     path="/register/seller",
+     *     tags={"Auth"},
+     *     operationId="registerSellerUser",
+     *     @OA\RequestBody(ref="#/components/requestBodies/RegisterUserRequest"),
+     *     @OA\Response(
+     *          response=200,
+     *          ref="#/components/responses/UserResource"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function registerSeller(RegisterUserRequest $request): JsonResponse
     {
         return $this->handleUserRegister($request, User::ROLES['SELLER']);
     }
 
-    public function registerBuyer(Request $request): JsonResponse
+    /**
+     * Registers a buyer user.
+     * 
+     * @OA\Post(
+     *     path="/register/buyer",
+     *     tags={"Auth"},
+     *     operationId="registerBuyerUser",
+     *     @OA\RequestBody(ref="#/components/requestBodies/RegisterUserRequest"),
+     *     @OA\Response(
+     *          response=200,
+     *          ref="#/components/responses/UserResource"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function registerBuyer(RegisterUserRequest $request): JsonResponse
     {
         return $this->handleUserRegister($request, User::ROLES['BUYER']);
     }
 
-    public function login(Request $request): JsonResponse
+    /**
+     * Authenticates a user.
+     * 
+     * @OA\Post(
+     *     path="/login",
+     *     tags={"Auth"},
+     *     operationId="loginUser",
+     *     @OA\RequestBody(ref="#/components/requestBodies/LoginUserRequest"),
+     *     @OA\Response(
+     *          response=200,
+     *          description="OK",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="accessToken",
+     *                     type="string"
+     *                 ),
+     *                 example={"accessToken": "2|DDUPRhVGMIUtXFIs1S0axZqeMXcGSpOPn1lJ4NS5"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     )
+     * )
+     */
+    public function login(LoginUserRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6'
-        ]);
-
         $credentials = request(['email', 'password']);
 
         if (!auth()->attempt($credentials)) {
@@ -46,18 +111,12 @@ class AuthController extends Controller
         $authToken = $user->createToken('auth-token')->plainTextToken;
 
         return Response::json([
-            'access_token' => $authToken,
+            'accessToken' => $authToken,
         ]);
     }
 
     protected function handleUserRegister(Request $request, string $role): JsonResponse
     {
-        $request->validate([
-            'username' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:6'
-        ]);
-
         $checkUser = User::where('email', $request->email)->first();
 
         if ($checkUser) {

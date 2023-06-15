@@ -10,7 +10,6 @@ use App\Http\Requests\UpdateSellerProductRequest;
 use App\Models\Product;
 use App\Http\Resources\SellerProductResource;
 use App\Http\Resources\SellerProductCollection;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Response as HttpResponse;
 
 class SellerProductController extends Controller

@@ -19,6 +19,84 @@
         }
     ],
     "paths": {
+        "/register/seller": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registers a seller user.",
+                "operationId": "registerSellerUser",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/RegisterUserRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/UserResource"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/register/buyer": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registers a buyer user.",
+                "operationId": "registerBuyerUser",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/RegisterUserRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/UserResource"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Authenticates a user.",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/LoginUserRequest"
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "accessToken": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object",
+                                    "example": {
+                                        "accessToken": "2|DDUPRhVGMIUtXFIs1S0axZqeMXcGSpOPn1lJ4NS5"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/user/me": {
             "get": {
                 "tags": [
@@ -84,6 +162,12 @@
                 "responses": {
                     "200": {
                         "description": "User deleted successfully"
+                    },
+                    "403": {
+                        "description": "Action is unauthorized"
+                    },
+                    "404": {
+                        "description": "User not found"
                     }
                 },
                 "security": [
@@ -183,6 +267,57 @@
             }
         },
         "requestBodies": {
+            "LoginUserRequest": {
+                "description": "Login with user",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "email": {
+                                    "description": "The email of the user",
+                                    "type": "string",
+                                    "example": "john@example.com"
+                                },
+                                "password": {
+                                    "description": "The password of the user",
+                                    "type": "string",
+                                    "example": "Example123"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "RegisterUserRequest": {
+                "description": "Register a new user",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "username": {
+                                    "description": "The username of the user",
+                                    "type": "string",
+                                    "example": "JohnSnow"
+                                },
+                                "email": {
+                                    "description": "The email of the user",
+                                    "type": "string",
+                                    "example": "john@example.com"
+                                },
+                                "password": {
+                                    "description": "The password of the user",
+                                    "type": "string",
+                                    "example": "Example123"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
             "UpdateUserRequestPatch": {
                 "description": "List of available properties to update",
                 "required": true,
