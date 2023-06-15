@@ -90,7 +90,7 @@ class UserController extends Controller
      *         response=403,
      *         description="Action is unauthorized"
      *     ),
-     *      @OA\Response(
+     *     @OA\Response(
      *         response=405,
      *         description="Validation exception"
      *     ),
@@ -115,9 +115,13 @@ class UserController extends Controller
      *     operationId="deleteUser",
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
-     *      response=200,
-     *      description="User deleted successfully"
-     *     )
+     *          response=200,
+     *          description="User deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     ),
      * )
      */
     public function destroy(DestroyUserRequest $request)
