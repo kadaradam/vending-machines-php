@@ -143,13 +143,11 @@ class AuthTest extends TestCase
     $this
       ->json('POST', $this->routes['register/seller'], $request)
       ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-      ->assertJsonValidationErrorFor('email')
+      ->assertJsonStructure([
+        'message'
+      ])
       ->assertJson([
-        'errors' => [
-          'email' => [
-            'The email has already been taken.',
-          ],
-        ],
+        'message' => 'The email has already been taken.',
       ]);
   }
 
@@ -207,12 +205,7 @@ class AuthTest extends TestCase
       ->json('POST', $this->routes['login'], $request)
       ->assertStatus(Response::HTTP_UNAUTHORIZED)
       ->assertJson([
-        "message" => "The given data was invalid.",
-        'errors' => [
-          'password' => [
-            'Invalid credentials',
-          ],
-        ],
+        "message" => "Invalid credentials",
       ]);
   }
 }

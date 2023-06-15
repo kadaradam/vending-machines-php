@@ -7,13 +7,24 @@ use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Services\AuthService;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 
 class AuthController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @param  AuthService  $authService
+     * @return void
+     */
+    public function __construct(private AuthService $authService)
+    {
+        //
+    }
+
     /**
      * Registers a seller user.
      * 
@@ -34,7 +45,11 @@ class AuthController extends Controller
      */
     public function registerSeller(RegisterUserRequest $request): JsonResponse
     {
-        return $this->handleUserRegister($request, User::ROLES['SELLER']);
+        $user = $this->authService->register($request, User::ROLES['SELLER']);
+
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(HttpResponse::HTTP_CREATED);
     }
 
     /**
@@ -57,7 +72,11 @@ class AuthController extends Controller
      */
     public function registerBuyer(RegisterUserRequest $request): JsonResponse
     {
-        return $this->handleUserRegister($request, User::ROLES['BUYER']);
+        $user = $this->authService->register($request, User::ROLES['BUYER']);
+
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(HttpResponse::HTTP_CREATED);
     }
 
     /**
@@ -94,50 +113,10 @@ class AuthController extends Controller
      */
     public function login(LoginUserRequest $request): JsonResponse
     {
-        $credentials = request(['email', 'password']);
-
-        if (!auth()->attempt($credentials)) {
-            return response()->json([
-                'message' => 'The given data was invalid.',
-                'errors' => [
-                    'password' => [
-                        'Invalid credentials'
-                    ],
-                ]
-            ], HttpResponse::HTTP_UNAUTHORIZED);
-        }
-
-        $user = User::where('email', $request->email)->first();
-        $authToken = $user->createToken('auth-token')->plainTextToken;
+        $authToken = $this->authService->login($request);
 
         return Response::json([
             'accessToken' => $authToken,
         ]);
-    }
-
-    protected function handleUserRegister(Request $request, string $role): JsonResponse
-    {
-        $checkUser = User::where('email', $request->email)->first();
-
-        if ($checkUser) {
-            return response()->json([
-                'errors' => [
-                    'email' => [
-                        'The email has already been taken.'
-                    ],
-                ]
-            ], HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role' => $role
-        ]);
-
-        return (new UserResource($user))
-            ->response()
-            ->setStatusCode(HttpResponse::HTTP_CREATED);
     }
 }
