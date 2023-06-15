@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DestroyUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -134,7 +135,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json([
                 'message' => 'Not Found!'
-            ], 404);
+            ], HttpResponse::HTTP_NOT_FOUND);
         }
 
         $user->delete();
