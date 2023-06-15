@@ -77,9 +77,8 @@ class AuthController extends Controller
             'role' => $role
         ]);
 
-        return Response::json(
-            new UserResource($user),
-            HttpResponse::HTTP_CREATED
-        );
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(HttpResponse::HTTP_CREATED);
     }
 }

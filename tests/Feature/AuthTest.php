@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -52,24 +51,26 @@ class AuthTest extends TestCase
       'password' => '123456',
     ];
 
-    $response = $this
+    $this
       ->json('POST', $this->routes['register/seller'], $request)
       ->assertStatus(Response::HTTP_CREATED)
       ->assertJsonStructure([
-        'id',
-        'username',
-        'email',
-        'updated_at',
-        'created_at',
-        'role'
+        'data' => [
+          'id',
+          'username',
+          'email',
+          'updatedAt',
+          'createdAt',
+          'role'
+        ]
       ])
       ->assertJson([
-        'email' => $request['email'],
-        'username' => $request['username'],
-        'role' => User::ROLES['SELLER']
+        'data' => [
+          'email' => $request['email'],
+          'username' => $request['username'],
+          'role' => User::ROLES['SELLER']
+        ]
       ]);
-
-    $this->assertInstanceOf(UserResource::class, $response->getOriginalContent());
   }
 
   /**
@@ -87,24 +88,26 @@ class AuthTest extends TestCase
       'password' => '123456',
     ];
 
-    $response = $this
+    $this
       ->json('POST', $this->routes['register/buyer'], $request)
       ->assertStatus(Response::HTTP_CREATED)
       ->assertJsonStructure([
-        'id',
-        'username',
-        'email',
-        'updated_at',
-        'created_at',
-        'role'
+        'data' => [
+          'id',
+          'username',
+          'email',
+          'updatedAt',
+          'createdAt',
+          'role'
+        ]
       ])
       ->assertJson([
-        'email' => $request['email'],
-        'username' => $request['username'],
-        'role' => User::ROLES['BUYER']
+        'data' => [
+          'email' => $request['email'],
+          'username' => $request['username'],
+          'role' => User::ROLES['BUYER']
+        ]
       ]);
-
-    $this->assertInstanceOf(UserResource::class, $response->getOriginalContent());
   }
 
   /**
