@@ -16,6 +16,9 @@ class EnsureUserHasRole
      */
     public function handle(Request $request, Closure $next, string $role): Response
     {
+        /**
+         * @psalm-suppress NoValue
+         */
         if (!Auth::check() || !Auth::user()->hasRole($role)) {
             return abort(403, 'Unauthorized');
         }
