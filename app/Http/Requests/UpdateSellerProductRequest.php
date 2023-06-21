@@ -30,8 +30,8 @@ class UpdateSellerProductRequest extends FormRequest
             ];
         } else {
             return [
-                'name' => ['sometimes', 'required', 'string'],
-                'cost' => ['sometimes', 'required', 'numeric'],
+                'name' => ['sometimes', 'string'],
+                'cost' => ['sometimes', 'numeric'],
             ];
         }
     }
