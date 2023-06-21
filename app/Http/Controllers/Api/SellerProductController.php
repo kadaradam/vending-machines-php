@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Filters\ProductFilter;
+use App\Transformers\ProductLocaleTransformer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSellerProductRequest;
@@ -26,16 +27,16 @@ class SellerProductController extends Controller
         if (count($queryItems) > 0) {
             $products = Product::where([
                 ...$queryItems,
-                ['seller_id', "=", $user->id]
-            ])->paginate();
+                ['seller_id', '=', $user->id],
+            ]);
 
             return new SellerProductCollection(
-                $products->appends($request->query())
+                $products->paginate()->appends($request->query())
             );
         }
 
         return new SellerProductCollection(
-            Product::where('seller_id', "=", $user->id)->paginate()
+            Product::where('seller_id', '=', $user->id)->paginate()
         );
     }
 
@@ -45,18 +46,18 @@ class SellerProductController extends Controller
     public function store(StoreSellerProductRequest $request)
     {
         $user = request()->user();
-        $name = $request->name;
-        $cost = $request->cost;
 
-        return (new SellerProductResource(
-            Product::create([
-                'seller_id' => $user->id,
-                'name' => $name,
-                'cost' => $cost,
-            ])
-        ))
+        $transformer = new ProductLocaleTransformer();
+        $transformedBody = $transformer->transform($request);
+
+        $product = Product::create([
+            'seller_id' => $user->id,
+            ...$transformedBody,
+        ]);
+
+        return (new SellerProductResource($product))
             ->response()
-            ->setStatusCode(HttpResponse::HTTP_CREATED);;
+            ->setStatusCode(HttpResponse::HTTP_CREATED);
     }
 
     /**
@@ -66,14 +67,17 @@ class SellerProductController extends Controller
     {
         $user = request()->user();
         $product = Product::where([
-            ['id', "=", $id],
-            ['seller_id', "=", $user->id]
+            ['id', '=', $id],
+            ['seller_id', '=', $user->id],
         ])->first();
 
         if (!$product) {
-            return response()->json([
-                'message' => 'Not Found!'
-            ], HttpResponse::HTTP_NOT_FOUND);
+            return response()->json(
+                [
+                    'message' => 'Not Found!',
+                ],
+                HttpResponse::HTTP_NOT_FOUND
+            );
         }
 
         return new SellerProductResource($product);
@@ -85,11 +89,13 @@ class SellerProductController extends Controller
     public function update(UpdateSellerProductRequest $request, string $id)
     {
         $user = request()->user();
+        $transformer = new ProductLocaleTransformer();
+        $transformedBody = $transformer->transform($request);
 
         Product::where([
             ['id', "=", $id],
             ['seller_id', "=", $user->id]
-        ])->update($request->validated());
+        ])->first()->update($transformedBody);
     }
 
     /**
@@ -99,14 +105,17 @@ class SellerProductController extends Controller
     {
         $user = request()->user();
         $product = Product::where([
-            ['id', "=", $id],
-            ['seller_id', "=", $user->id]
+            ['id', '=', $id],
+            ['seller_id', '=', $user->id],
         ])->first();
 
         if (!$product) {
-            return response()->json([
-                'message' => 'Not Found!'
-            ], HttpResponse::HTTP_NOT_FOUND);
+            return response()->json(
+                [
+                    'message' => 'Not Found!',
+                ],
+                HttpResponse::HTTP_NOT_FOUND
+            );
         }
 
         $product->delete();
