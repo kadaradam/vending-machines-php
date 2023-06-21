@@ -2,19 +2,17 @@ version: "3.9"
 
 services:
     db:
-        build:
-            context: .
-            dockerfile: ./docker/Dockerfile-Postgis
-        restart: always
+        image: postgres:15.2
+        container_name: postgres
+        hostname: postgres
         ports:
-            - "5432:5432"
+            - 5432:5432
         environment:
-            POSTGRES_DB: development
+            POSTGRES_DB: laravel
             POSTGRES_USER: developer
             POSTGRES_PASSWORD: password
         volumes:
-            - ./docker/init-postgres-scripts:/docker-entrypoint-initdb.d
-            - dbdata:/var/lib/postgresql/data
+            - postgres-data:/var/lib/postgresql/data
 
 volumes:
-    dbdata:
+    postgres-data:
